@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "541448534868",
+    "project_id": "jetbookreader-ed106",
+    "storage_bucket": "jetbookreader-ed106.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:541448534868:android:e9dbb15ca5cf6edf29a6c1",
+        "android_client_info": {
+          "package_name": "com.example.jetbookreader"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcZWV3vW1vnDfl-NcaT3tccU-Dn6-TLiQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
