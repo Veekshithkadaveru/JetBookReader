@@ -1,9 +1,11 @@
 package com.example.jetbookreader.screens.login
 
-import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,25 +29,51 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.jetbookreader.R
 import com.example.jetbookreader.components.EmailInput
 import com.example.jetbookreader.components.PasswordInput
 import com.example.jetbookreader.components.ReaderLogo
 
 @Composable
 fun ReaderLoginScreen(navController: NavController) {
+    val showLoginForm = rememberSaveable { mutableStateOf(false) }
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             ReaderLogo()
-            UserForm(loading = false, isCreateAccount = false) { email, password ->
-                Log.d("Form", "ReaderLogin:$email $password")
-
+            if (showLoginForm.value)
+                UserForm(loading = false, isCreateAccount = false) { email, password ->
+                    TODO("Create Firebase login")
+                }
+            else {
+                UserForm(loading = false, isCreateAccount = true) { email, password ->
+                    TODO("Create Firebase account")
+                }
             }
+        }
+        Spacer(modifier = Modifier.height(15.dp))
+        Row(
+            modifier = Modifier.padding(15.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val text = if (showLoginForm.value) "Sign Up" else "Login"
+            Text(text = "New User?")
+            Text(
+                text,
+                modifier = Modifier
+                    .clickable { showLoginForm.value = !showLoginForm.value }
+                    .padding(start = 5.dp),
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }
@@ -70,6 +98,12 @@ fun UserForm(
         .verticalScroll(rememberScrollState())
 
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        if (isCreateAccount) Text(
+            text = stringResource(id = R.string.create_account),
+            modifier = Modifier.padding(5.dp)
+        ) else Text(
+            text = ""
+        )
         EmailInput(
             emailState = email,
             enabled = !loading,
@@ -95,6 +129,7 @@ fun UserForm(
             validInputs = valid
         ) {
             onDone(email.value.trim(), password.value.trim())
+            keyboardController?.hide()
         }
     }
 }
