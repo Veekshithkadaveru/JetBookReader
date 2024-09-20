@@ -33,14 +33,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.jetbookreader.R
 import com.example.jetbookreader.components.EmailInput
 import com.example.jetbookreader.components.PasswordInput
 import com.example.jetbookreader.components.ReaderLogo
+import com.example.jetbookreader.navigation.ReaderScreens
 
 @Composable
-fun ReaderLoginScreen(navController: NavController) {
+fun ReaderLoginScreen(
+    navController: NavController,
+    viewmodel: LoginScreenViewmodel = viewModel()
+) {
     val showLoginForm = rememberSaveable { mutableStateOf(false) }
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -50,11 +55,15 @@ fun ReaderLoginScreen(navController: NavController) {
             ReaderLogo()
             if (showLoginForm.value)
                 UserForm(loading = false, isCreateAccount = false) { email, password ->
-                    TODO("Create Firebase login")
+                    viewmodel.signInWithEmailAndPassword(email, password){
+                        navController.navigate(ReaderScreens.ReaderHomeScreen.name)
+
+                    }
+                   // TODO("Create Firebase login")
                 }
             else {
                 UserForm(loading = false, isCreateAccount = true) { email, password ->
-                    TODO("Create Firebase account")
+                 //   TODO("Create Firebase account")
                 }
             }
         }

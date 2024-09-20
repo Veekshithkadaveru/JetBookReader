@@ -15,13 +15,15 @@ class LoginScreenViewmodel : ViewModel() {
     private val _loading = MutableStateFlow(false)
     val loading: MutableStateFlow<Boolean> = _loading
 
-    fun signInWithEmailAndPassword(email: String, password: String)=
+    fun signInWithEmailAndPassword(email: String, password: String,home:()->Unit)=
         viewModelScope.launch{
         try {
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        TODO("Take User to Home")
+                        Log.d("FB", "signInWithEmailAndPassword: Logged In ${task.result}")
+                      home()
+                    //  TODO("Take User to Home")
                     } else {
                         Log.d("FB", "signInWithEmailAndPassword: ${task.result}")
                     }
