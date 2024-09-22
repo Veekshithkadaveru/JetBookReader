@@ -15,28 +15,40 @@ class LoginScreenViewmodel : ViewModel() {
     private val _loading = MutableStateFlow(false)
     val loading: MutableStateFlow<Boolean> = _loading
 
-    fun signInWithEmailAndPassword(email: String, password: String,home:()->Unit)=
-        viewModelScope.launch{
-        try {
-            auth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Log.d("FB", "signInWithEmailAndPassword: Logged In ${task.result}")
-                      home()
-                    //  TODO("Take User to Home")
-                    } else {
-                        Log.d("FB", "signInWithEmailAndPassword: ${task.result}")
+    fun signInWithEmailAndPassword(email: String, password: String, home: () -> Unit) =
+        viewModelScope.launch {
+            try {
+                auth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Log.d("FB", "signInWithEmailAndPassword: Logged In ${task.result}")
+                            home()
+                            //  TODO("Take User to Home")
+                        } else {
+                            Log.d("FB", "signInWithEmailAndPassword: ${task.result}")
+                        }
+
                     }
 
-                }
+            } catch (ex: Exception) {
+                Log.d("FB", "signInWithEmailAndPassword:${ex.message}")
+            }
 
-        } catch (ex: Exception) {
-            Log.d("FB", "signInWithEmailAndPassword:${ex.message}")
         }
 
-    }
+    fun createUserWithEmailAndPassword(email: String, password: String, home: () -> Unit) {
+        if (_loading.value == false) {
+            _loading.value = true
+            auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        home()
+                    } else {
+                        Log.d("FB", "createUserWithEmailAndPassword:$task")
+                    }
+                    _loading.value = false
 
-    fun createUserWithEmailAndPassword() {
-
+                }
+        }
     }
 }

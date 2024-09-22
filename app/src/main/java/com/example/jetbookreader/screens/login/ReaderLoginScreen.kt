@@ -55,15 +55,16 @@ fun ReaderLoginScreen(
             ReaderLogo()
             if (showLoginForm.value)
                 UserForm(loading = false, isCreateAccount = false) { email, password ->
-                    viewmodel.signInWithEmailAndPassword(email, password){
+                    viewmodel.signInWithEmailAndPassword(email, password) {
                         navController.navigate(ReaderScreens.ReaderHomeScreen.name)
 
                     }
-                   // TODO("Create Firebase login")
                 }
             else {
                 UserForm(loading = false, isCreateAccount = true) { email, password ->
-                 //   TODO("Create Firebase account")
+                    viewmodel.createUserWithEmailAndPassword(email, password) {
+                        navController.navigate(ReaderScreens.ReaderHomeScreen.name)
+                    }
                 }
             }
         }
