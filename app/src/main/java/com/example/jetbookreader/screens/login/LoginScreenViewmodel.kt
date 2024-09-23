@@ -3,6 +3,7 @@ package com.example.jetbookreader.screens.login
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.jetbookreader.model.MUser
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -22,7 +23,7 @@ class LoginScreenViewmodel : ViewModel() {
                 auth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            val displayName= task.result.user?.email?.split('@')?.get(0)
+                            val displayName = task.result.user?.email?.split('@')?.get(0)
                             createUser(displayName)
                             home()
                             //  TODO("Take User to Home")
@@ -39,9 +40,14 @@ class LoginScreenViewmodel : ViewModel() {
 
     private fun createUser(displayName: String?) {
         val userId = auth.currentUser?.uid
-        val user = mutableMapOf<String, Any>()
-        user["user_id"] = userId.toString()
-        user["display_name"] = displayName.toString()
+        val user = MUser(
+            userId = userId.toString(),
+            displayName = displayName.toString(),
+            avatarUrl = "",
+            quote = "Nothing here",
+            profession = "Android Developer",
+            id = null
+        ).toMap()
 
         FirebaseFirestore.getInstance().collection("users")
             .add(user)

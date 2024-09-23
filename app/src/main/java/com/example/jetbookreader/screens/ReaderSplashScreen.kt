@@ -50,6 +50,7 @@ fun ReaderSplashScreen(navController: NavController) {
        else{
             navController.navigate(ReaderScreens.ReaderHomeScreen.name)
         }
+
     }
 
     Surface(
