@@ -1,20 +1,27 @@
 package com.example.jetbookreader.screens.home
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -30,6 +37,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -56,12 +64,42 @@ fun Home(navController: NavController) {
 
 @Composable
 fun HomeContent(navController: NavController) {
+    val email = FirebaseAuth.getInstance().currentUser?.email
+    val currentUserName = if (!email.isNullOrEmpty())
+        FirebaseAuth.getInstance().currentUser?.email?.split("@")?.get(0)
+    else "Anonymous"
     Column(
         modifier = Modifier.padding(2.dp),
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
-        TitleSection(label = "Your reading \n" + "activity right now...")
+        Row(modifier = Modifier.align(Alignment.Start)) {
+            TitleSection(label = "Your reading \n" + "activity right now...")
+            Spacer(modifier = Modifier.fillMaxWidth(0.7f))
+            Column {
+                Icon(
+                    imageVector = Icons.Filled.AccountCircle,
+                    contentDescription = "Profile",
+                    modifier = Modifier
+                        .clickable {
+                            navController.navigate(ReaderScreens.ReaderStatsScreen.name)
+                        }
+                        .size(45.dp),
+                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                )
 
+                Text(
+                    text = currentUserName!!,
+                    modifier = Modifier.padding(2.dp),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.Red,
+                    fontSize = 15.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Clip
+                )
+
+                Divider()
+            }
+        }
     }
 }
 
