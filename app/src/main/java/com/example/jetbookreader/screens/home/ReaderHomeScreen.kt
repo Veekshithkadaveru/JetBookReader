@@ -4,12 +4,15 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -29,8 +32,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -104,6 +109,7 @@ fun HomeContent(navController: NavController) {
                 Divider()
             }
         }
+        ListCard()
     }
 }
 
@@ -129,48 +135,67 @@ fun ListCard(
             .width(202.dp)
             .clickable { onPressDetails.invoke(book.title.toString()) }
     ) {
-        Column(
-            modifier = Modifier.width(screenWidth.dp - (spacing * 2)),
-            horizontalAlignment = Alignment.Start
+        Box(
+            modifier = Modifier
+                .width(screenWidth.dp - (spacing * 2))
+                .fillMaxHeight() // Ensure the Box fills the card's height
         ) {
-            Row(horizontalArrangement = Arrangement.Center) {
-                Image(
-                    painter = rememberAsyncImagePainter(model = ""),
-                    contentDescription = "book image",
-                    modifier = Modifier
-                        .height(140.dp)
-                        .width(100.dp)
-                        .padding(4.dp)
-                )
-                Spacer(modifier = Modifier.width(50.dp))
-                Column(
-                    modifier = Modifier.padding(top = 25.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+            Column(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxHeight(),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Icon(
-                        imageVector = Icons.Rounded.FavoriteBorder,
-                        contentDescription = "Favorite Icon",
-                        modifier = Modifier.padding(bottom = 1.dp)
+                    Image(
+                        painter = rememberAsyncImagePainter(model = ""),
+                        contentDescription = "book image",
+                        modifier = Modifier
+                            .height(140.dp)
+                            .width(100.dp)
+                            .padding(4.dp)
                     )
-                    BookRating(score = 3.5)
+                    Spacer(modifier = Modifier.width(20.dp))
+                    Column(
+                        modifier = Modifier.padding(top = 25.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.FavoriteBorder,
+                            contentDescription = "Favorite Icon",
+                            modifier = Modifier.padding(bottom = 1.dp)
+                        )
+                        BookRating(score = 3.5)
+                    }
                 }
+                Text(
+                    text = "Book Title",
+                    modifier = Modifier.padding(4.dp),
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = "Authors: All..",
+                    modifier = Modifier.padding(4.dp),
+                    style = MaterialTheme.typography.labelMedium
+                )
             }
-            Text(
-                text = "Book Title",
-                modifier = Modifier.padding(4.dp),
-                fontWeight = FontWeight.Bold,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                text = "Authors: All..",
-                modifier = Modifier.padding(4.dp),
-                style = MaterialTheme.typography.labelMedium
-            )
+
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd) // Align at bottom end
+            ) {
+                RoundedButton(label = "Reading", radius = 70)
+            }
         }
     }
 }
+
 
 @Composable
 fun BookRating(score: Double = 4.5) {
@@ -202,4 +227,32 @@ fun ReadingRightNowArea(books: List<MBook>, navController: NavController) {
 
 }
 
+@Composable
+fun RoundedButton(
+    label: String = "Reading",
+    radius: Int = 29,
+    onPress: () -> Unit = {}
+) {
+    Surface(
+        modifier = Modifier
+            .clip(
+            RoundedCornerShape(
+                bottomEndPercent = radius,
+                topStartPercent = radius
+            )
+        ),
+        color = Color(0xFF92CBDF)
+    ) {
+        Column(
+            modifier = Modifier
+                .width(90.dp)
+                .heightIn(40.dp)
+                .clickable { onPress.invoke() },
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(text = label, style = TextStyle(color = Color.White, fontSize = 15.sp))
+        }
+    }
+}
 
