@@ -40,11 +40,14 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun Home(navController: NavController) {
     Scaffold(topBar = {
-        ReaderAppBar(title = "Jet Book Reader", navController = navController, onBackArrowClicked = {})
+        ReaderAppBar(
+            title = "Jet Book Reader",
+            navController = navController,
+            onBackArrowClicked = {})
     },
         floatingActionButton = {
             FABContent {
-
+                navController.navigate(ReaderScreens.SearchScreen.name)
             }
         }) { innerPadding ->
         Surface(
@@ -128,11 +131,8 @@ fun HorizontalScrollableComponent(listOfBooks: List<MBook>, onCardPressed: (Stri
             ListCard(book) {
                 onCardPressed(it)
             }
-
         }
-
     }
-
 }
 
 
