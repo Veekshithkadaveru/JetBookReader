@@ -40,7 +40,7 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun Home(navController: NavController) {
     Scaffold(topBar = {
-        ReaderAppBar(title = "Jet Book Reader", navController = navController)
+        ReaderAppBar(title = "Jet Book Reader", navController = navController, onBackArrowClicked = {})
     },
         floatingActionButton = {
             FABContent {

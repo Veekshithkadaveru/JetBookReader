@@ -42,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
@@ -169,8 +170,10 @@ fun PasswordVisibility(passwordVisibility: MutableState<Boolean>) {
 @Composable
 fun ReaderAppBar(
     title: String,
+    icon: ImageVector? = null,
     showProfile: Boolean = true,
-    navController: NavController
+    navController: NavController,
+    onBackArrowClicked: () -> Unit
 ) {
     TopAppBar(
         title = {
@@ -183,8 +186,17 @@ fun ReaderAppBar(
                             .clip(
                                 RoundedCornerShape(12.dp)
                             )
-                            .scale(0.1f)
+                            .scale(0.9f)
                     )
+                }
+                if (icon != null) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = "Arrow Back",
+                        tint = Color.Red.copy(0.7f),
+                        modifier = Modifier.clickable { onBackArrowClicked.invoke() }
+                    )
+                    Spacer(modifier = Modifier.width(40.dp))
                 }
                 Text(
                     text = title,
@@ -199,10 +211,13 @@ fun ReaderAppBar(
                     navController.navigate(ReaderScreens.LoginScreen.name)
                 }
             }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.Logout,
-                    contentDescription = "Log out"
-                )
+                if (showProfile)
+                    Row {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Logout,
+                            contentDescription = "Log out"
+                        )
+                    } else Box {}
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
