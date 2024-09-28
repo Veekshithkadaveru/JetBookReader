@@ -151,7 +151,7 @@ fun ListCard(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Image(
-                        painter = rememberAsyncImagePainter(model = ""),
+                        painter = rememberAsyncImagePainter(model = "http://books.google.com/books/content?id=rpBNEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"),
                         contentDescription = "book image",
                         modifier = Modifier
                             .height(140.dp)
