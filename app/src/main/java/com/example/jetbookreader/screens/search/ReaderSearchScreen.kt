@@ -35,6 +35,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
@@ -45,7 +46,10 @@ import com.example.jetbookreader.model.MBook
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun ReaderSearchScreen(navController: NavController) {
+fun ReaderSearchScreen(
+    navController: NavController,
+    viewmodel: BookSearchViewmodel = hiltViewModel()
+) {
     Scaffold(topBar = {
         ReaderAppBar(
             title = "Search Books",
@@ -61,8 +65,12 @@ fun ReaderSearchScreen(navController: NavController) {
                 SearchForm(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
-                )
+                        .padding(16.dp),
+                    viewmodel = viewmodel
+                ) { query ->
+                    viewmodel.searchBooks(query)
+
+                }
             }
             Spacer(modifier = Modifier.height(13.dp))
             BookList(navController)
@@ -131,6 +139,7 @@ fun BookRow(book: MBook, navController: NavController) {
 @Composable
 fun SearchForm(
     modifier: Modifier = Modifier,
+    viewmodel: BookSearchViewmodel,
     loading: Boolean = false,
     hint: String = "Search",
     onSearch: (String) -> Unit = {}

@@ -36,5 +36,6 @@ class BookRepository @Inject constructor(private val api: BooksApi) {
         } catch (e: Exception) {
             bookInfoOrException.e = e
         }
+        return bookInfoOrException
     }
 }
