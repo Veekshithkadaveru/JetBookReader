@@ -3,6 +3,7 @@ package com.example.jetbookreader.screens.search
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -20,7 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -42,14 +43,14 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.jetbookreader.components.InputField
 import com.example.jetbookreader.components.ReaderAppBar
-import com.example.jetbookreader.model.MBook
+import com.example.jetbookreader.model.Item
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ReaderSearchScreen(
     navController: NavController,
-    viewmodel: BookSearchViewmodel = hiltViewModel()
+    viewmodel: BooksSearchViewModel = hiltViewModel()
 ) {
     Scaffold(topBar = {
         ReaderAppBar(
@@ -67,7 +68,6 @@ fun ReaderSearchScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
-                    viewmodel = viewmodel
                 ) { query ->
                     viewmodel.searchBooks(query)
 
@@ -80,33 +80,43 @@ fun ReaderSearchScreen(
 }
 
 @Composable
-fun BookList(navController: NavController, viewmodel: BookSearchViewmodel) {
-    if (viewmodel.listOfBooks.value.loading == true){
-        CircularProgressIndicator()
-    }
-    val listOfBooks = listOf(
-        MBook(id = "asdfg", title = "Hi Again", authors = "veekshith", notes = null),
-        MBook(id = "asdfg", title = "Hello Again", authors = "veekshith", notes = null),
-        MBook(id = "asdfg", title = "Yo Again", authors = "jake", notes = null),
-        MBook(id = "asdfg", title = "Hello Ain", authors = "sam", notes = null),
-        MBook(id = "asdfg", title = "Hello Again", authors = "veekshith", notes = null)
-    )
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 65.dp),
-        contentPadding = PaddingValues(6.dp)
-    ) {
-        items(items = listOfBooks) { book ->
-            BookRow(book, navController)
+fun BookList(
+    navController: NavController,
+    viewModel: BooksSearchViewModel = hiltViewModel()
+) {
 
+
+    val listOfBooks = viewModel.list
+    if (viewModel.isLoading) {
+        Row(
+            modifier = Modifier.padding(end = 2.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            LinearProgressIndicator()
+            Text(text = "Loading...")
         }
 
+    } else {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 65.dp),
+            contentPadding = PaddingValues(16.dp)
+        ) {
+            items(items = listOfBooks) { book ->
+                BookRow(book, navController)
+
+            }
+
+        }
     }
+
 }
 
+
 @Composable
-fun BookRow(book: MBook, navController: NavController) {
+fun BookRow(book: Item, navController: NavController) {
     Card(modifier = Modifier
         .clickable { }
         .fillMaxWidth()
@@ -118,8 +128,11 @@ fun BookRow(book: MBook, navController: NavController) {
             modifier = Modifier.padding(5.dp),
             verticalAlignment = Alignment.Top
         ) {
-            val imageUrl =
+            val imageUrl: String = if (book.volumeInfo.imageLinks.smallThumbnail.isEmpty()) {
                 "http://books.google.com/books/content?id=zmnhDAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+            } else {
+                book.volumeInfo.imageLinks.smallThumbnail
+            }
             Image(
                 painter = rememberAsyncImagePainter(model = imageUrl),
                 contentDescription = "book image",
@@ -128,10 +141,10 @@ fun BookRow(book: MBook, navController: NavController) {
                     .fillMaxHeight()
                     .padding(end = 4.dp)
             )
-            Column() {
-                Text(text = book.title.toString(), overflow = TextOverflow.Ellipsis)
+            Column {
+                Text(text = book.volumeInfo.title, overflow = TextOverflow.Ellipsis)
                 Text(
-                    text = "Author:${book.authors}",
+                    text = "Author:${book.volumeInfo.authors}",
                     overflow = TextOverflow.Clip,
                     style = MaterialTheme.typography.labelMedium
                 )
@@ -143,7 +156,6 @@ fun BookRow(book: MBook, navController: NavController) {
 @Composable
 fun SearchForm(
     modifier: Modifier = Modifier,
-    viewmodel: BookSearchViewmodel,
     loading: Boolean = false,
     hint: String = "Search",
     onSearch: (String) -> Unit = {}
@@ -151,7 +163,7 @@ fun SearchForm(
     Column {
         val searchQueryState = rememberSaveable { mutableStateOf("") }
         val keyboardController = LocalSoftwareKeyboardController.current
-        val valid = remember(searchQueryState) {
+        val valid = remember(searchQueryState.value) {
             searchQueryState.value.trim().isNotEmpty()
         }
         InputField(
