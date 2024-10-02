@@ -17,7 +17,7 @@ import javax.inject.Inject
 class BookSearchViewmodel @Inject constructor(private val repository: BookRepository) :
     ViewModel() {
 
-    private val listOfBooks: MutableState<DataOrException<List<Item>, Boolean, Exception>> =
+    val listOfBooks: MutableState<DataOrException<List<Item>, Boolean, Exception>> =
         mutableStateOf(DataOrException(null, true, Exception("")))
 
     init {

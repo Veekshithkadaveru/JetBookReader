@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -73,13 +74,16 @@ fun ReaderSearchScreen(
                 }
             }
             Spacer(modifier = Modifier.height(13.dp))
-            BookList(navController)
+            BookList(navController, viewmodel)
         }
     }
 }
 
 @Composable
-fun BookList(navController: NavController) {
+fun BookList(navController: NavController, viewmodel: BookSearchViewmodel) {
+    if (viewmodel.listOfBooks.value.loading == true){
+        CircularProgressIndicator()
+    }
     val listOfBooks = listOf(
         MBook(id = "asdfg", title = "Hi Again", authors = "veekshith", notes = null),
         MBook(id = "asdfg", title = "Hello Again", authors = "veekshith", notes = null),
