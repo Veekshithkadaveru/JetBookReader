@@ -89,7 +89,7 @@ fun BookList(
 
     val listOfBooks = viewModel.list
     if (viewModel.isLoading) {
-        Box(modifier = Modifier.padding(top = 250.dp)) {
+        Row(modifier = Modifier.padding(top = 350.dp)) {
             LinearProgressIndicator()
             Text(text = "Loading...")
         }
