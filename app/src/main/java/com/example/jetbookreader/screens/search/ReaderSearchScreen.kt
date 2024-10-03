@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -88,14 +89,10 @@ fun BookList(
 
     val listOfBooks = viewModel.list
     if (viewModel.isLoading) {
-        Row(
-            modifier = Modifier.padding(end = 2.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            LinearProgressIndicator()
-            Text(text = "Loading...")
-        }
+      Box (modifier = Modifier.padding(top = 250.dp)){
+          LinearProgressIndicator()
+          Text(text = "Loading...")
+      }
 
     } else {
         LazyColumn(
@@ -120,8 +117,8 @@ fun BookRow(book: Item, navController: NavController) {
     Card(modifier = Modifier
         .clickable { }
         .fillMaxWidth()
-        .height(100.dp)
-        .padding(6.dp),
+        .height(110.dp)
+        .padding(8.dp),
         shape = RectangleShape,
         elevation = CardDefaults.cardElevation(7.dp)) {
         Row(
@@ -139,12 +136,22 @@ fun BookRow(book: Item, navController: NavController) {
                 modifier = Modifier
                     .width(80.dp)
                     .fillMaxHeight()
-                    .padding(end = 4.dp)
+                    .padding(end = 8.dp)
             )
             Column {
                 Text(text = book.volumeInfo.title, overflow = TextOverflow.Ellipsis)
                 Text(
                     text = "Author:${book.volumeInfo.authors}",
+                    overflow = TextOverflow.Clip,
+                    style = MaterialTheme.typography.labelMedium
+                )
+                Text(
+                    text = "Published Date:${book.volumeInfo.publishedDate}",
+                    overflow = TextOverflow.Clip,
+                    style = MaterialTheme.typography.labelMedium
+                )
+                Text(
+                    text = "${book.volumeInfo.categories}",
                     overflow = TextOverflow.Clip,
                     style = MaterialTheme.typography.labelMedium
                 )
