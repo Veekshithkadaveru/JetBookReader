@@ -3,7 +3,6 @@ package com.example.jetbookreader.screens.search
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -45,6 +44,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.jetbookreader.components.InputField
 import com.example.jetbookreader.components.ReaderAppBar
 import com.example.jetbookreader.model.Item
+import com.example.jetbookreader.navigation.ReaderScreens
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -89,10 +89,10 @@ fun BookList(
 
     val listOfBooks = viewModel.list
     if (viewModel.isLoading) {
-      Box (modifier = Modifier.padding(top = 250.dp)){
-          LinearProgressIndicator()
-          Text(text = "Loading...")
-      }
+        Box(modifier = Modifier.padding(top = 250.dp)) {
+            LinearProgressIndicator()
+            Text(text = "Loading...")
+        }
 
     } else {
         LazyColumn(
@@ -115,7 +115,9 @@ fun BookList(
 @Composable
 fun BookRow(book: Item, navController: NavController) {
     Card(modifier = Modifier
-        .clickable { }
+        .clickable {
+            navController.navigate(ReaderScreens.DetailScreen.name + "/${book.id}")
+        }
         .fillMaxWidth()
         .height(110.dp)
         .padding(8.dp),
