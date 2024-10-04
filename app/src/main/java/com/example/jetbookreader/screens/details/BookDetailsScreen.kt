@@ -5,6 +5,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -35,9 +36,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.jetbookreader.components.ReaderAppBar
+import com.example.jetbookreader.components.RoundedButton
 import com.example.jetbookreader.data.Resource
 import com.example.jetbookreader.model.Item
 import com.example.jetbookreader.navigation.ReaderScreens
+import com.google.firebase.firestore.FirebaseFirestore
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -148,6 +151,22 @@ fun ShowBookDetails(bookInfo: Resource<Item>, navController: NavController) {
                 Text(text = cleanDescription)
             }
 
+        }
+    }
+
+
+
+    Row(
+        modifier = Modifier.padding(top = 6.dp),
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        RoundedButton(label = "Save") {
+
+        }
+        Spacer(modifier = Modifier.width(25.dp))
+
+        RoundedButton(label = "Cancel") {
+            navController.popBackStack()
         }
 
     }
