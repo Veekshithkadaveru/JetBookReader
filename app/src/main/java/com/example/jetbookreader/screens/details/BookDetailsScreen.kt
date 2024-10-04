@@ -39,8 +39,8 @@ import com.example.jetbookreader.components.ReaderAppBar
 import com.example.jetbookreader.components.RoundedButton
 import com.example.jetbookreader.data.Resource
 import com.example.jetbookreader.model.Item
+import com.example.jetbookreader.model.MBook
 import com.example.jetbookreader.navigation.ReaderScreens
-import com.google.firebase.firestore.FirebaseFirestore
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -150,7 +150,6 @@ fun ShowBookDetails(bookInfo: Resource<Item>, navController: NavController) {
             item {
                 Text(text = cleanDescription)
             }
-
         }
     }
 
@@ -161,7 +160,8 @@ fun ShowBookDetails(bookInfo: Resource<Item>, navController: NavController) {
         horizontalArrangement = Arrangement.SpaceAround
     ) {
         RoundedButton(label = "Save") {
-
+            val book = MBook()
+            saveToFirebase(book)
         }
         Spacer(modifier = Modifier.width(25.dp))
 
@@ -171,5 +171,9 @@ fun ShowBookDetails(bookInfo: Resource<Item>, navController: NavController) {
 
     }
 
+
+}
+
+fun saveToFirebase(book: MBook) {
 
 }
