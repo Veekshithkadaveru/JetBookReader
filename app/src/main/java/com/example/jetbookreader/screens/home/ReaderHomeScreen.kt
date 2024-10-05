@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.jetbookreader.components.FABContent
 import com.example.jetbookreader.components.ListCard
@@ -38,7 +39,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Home(navController: NavController) {
+fun Home(navController: NavController, viewModel: HomeScreenViewmodel = hiltViewModel()) {
     Scaffold(topBar = {
         ReaderAppBar(
             title = "Jet Book Reader",
@@ -55,20 +56,24 @@ fun Home(navController: NavController) {
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            HomeContent(navController)
+            HomeContent(navController, viewModel)
         }
     }
 }
 
 @Composable
-fun HomeContent(navController: NavController) {
-    val listOfBooks = listOf(
-        MBook(id = "asdfg", title = "Hi Again", authors = "veekshith", notes = null),
-        MBook(id = "asdfg", title = "Hello Again", authors = "veekshith", notes = null),
-        MBook(id = "asdfg", title = "Yo Again", authors = "jake", notes = null),
-        MBook(id = "asdfg", title = "Hello Ain", authors = "sam", notes = null),
-        MBook(id = "asdfg", title = "Hello Again", authors = "veekshith", notes = null)
-    )
+fun HomeContent(navController: NavController, viewModel: HomeScreenViewmodel) {
+
+    var listOfBooks = emptyList<MBook>()
+    val currentUser = FirebaseAuth.getInstance().currentUser
+
+    if (!viewModel.data.value.data.isNullOrEmpty()) {
+        listOfBooks = viewModel.data.value.data!!.toList().filter { mBook ->
+            mBook.userId == currentUser?.uid.toString()
+
+        }
+    }
+
     val email = FirebaseAuth.getInstance().currentUser?.email
     val currentUserName = if (!email.isNullOrEmpty())
         FirebaseAuth.getInstance().currentUser?.email?.split("@")?.get(0)
