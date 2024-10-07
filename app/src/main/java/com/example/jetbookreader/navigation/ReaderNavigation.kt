@@ -24,32 +24,47 @@ fun ReaderNavigation() {
         navController = navController,
         startDestination = ReaderScreens.SplashScreen.name
     ) {
+
         composable(ReaderScreens.SplashScreen.name) {
             ReaderSplashScreen(navController = navController)
         }
+
         composable(ReaderScreens.LoginScreen.name) {
             ReaderLoginScreen(navController = navController)
         }
+
         composable(ReaderScreens.ReaderHomeScreen.name) {
             val homeViewModel = hiltViewModel<HomeScreenViewmodel>()
-            Home(navController = navController,viewModel=homeViewModel)
+            Home(navController = navController, viewModel = homeViewModel)
         }
+
         composable(ReaderScreens.SearchScreen.name) {
             val searchViewmodel = hiltViewModel<BooksSearchViewModel>()
             ReaderSearchScreen(navController = navController, viewmodel = searchViewmodel)
         }
+
         composable(ReaderScreens.ReaderStatsScreen.name) {
             ReaderStatsScreen(navController = navController)
         }
-        composable(ReaderScreens.UpdateScreen.name) {
-            ReaderUpdateScreen(navController = navController)
-        }
+
         val detailName = ReaderScreens.DetailScreen.name
+
         composable("$detailName/{bookId}", arguments = listOf(navArgument("bookId") {
             type = NavType.StringType
         })) { backStackEntry ->
             backStackEntry.arguments?.getString("bookId").let {
                 BookDetailsScreen(navController = navController, bookId = it.toString())
+            }
+        }
+
+        val updateName = ReaderScreens.UpdateScreen.name
+        composable("$updateName/{bookItemId}",
+            arguments = listOf(navArgument("bookItemId") {
+                type = NavType.StringType
+            })
+        ) { navBackStackEntry ->
+            navBackStackEntry.arguments?.getString("bookItemId").let {
+                ReaderUpdateScreen(navController = navController, bookItemId = it.toString())
             }
 
         }
