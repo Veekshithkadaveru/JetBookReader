@@ -44,6 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.jetbookreader.components.InputField
+import com.example.jetbookreader.components.RatingBar
 import com.example.jetbookreader.components.ReaderAppBar
 import com.example.jetbookreader.data.DataOrException
 import com.example.jetbookreader.model.MBook
@@ -124,6 +125,7 @@ fun ShowSimpleForm(book: MBook, navController: NavController) {
     val notesText = remember { mutableStateOf("") }
     val isStartReading = remember { mutableStateOf(false) }
     val isFinishedReading = remember { mutableStateOf(false) }
+    val ratingVal = remember { mutableStateOf(0) }
 
     SimpleForm(
         modifier = Modifier,
@@ -180,7 +182,12 @@ fun ShowSimpleForm(book: MBook, navController: NavController) {
             }
         }
 
-
+    }
+    Text(text = "Rating", modifier = Modifier.padding(bottom = 3.dp))
+    book.rating?.toInt().let {
+        RatingBar(rating = it!!) { rating ->
+            ratingVal.value = rating
+        }
     }
 }
 
