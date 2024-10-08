@@ -2,6 +2,7 @@ package com.example.jetbookreader.screens.update
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
@@ -24,17 +26,22 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.jetbookreader.components.InputField
 import com.example.jetbookreader.components.ReaderAppBar
 import com.example.jetbookreader.data.DataOrException
 import com.example.jetbookreader.model.MBook
@@ -97,10 +104,66 @@ fun ReaderUpdateScreen(
 
                     }
 
+                    ShowSimpleForm(book = viewModel.data.value.data?.first { mBook ->
+                        mBook.googleBookId == bookItemId
+                    }!!, navController)
+
                 }
             }
 
         }
+
+    }
+}
+
+@Composable
+fun ShowSimpleForm(book: MBook, navController: NavController) {
+
+    val notesText = remember { mutableStateOf("") }
+
+    SimpleForm(
+        modifier = Modifier,
+        loading = false,
+        defaultValue = book.notes.toString().ifEmpty { "No Thoughts available" }
+    ) { note ->
+
+        notesText.value = note
+    }
+}
+
+@Composable
+fun SimpleForm(
+    modifier: Modifier,
+    loading: Boolean,
+    defaultValue: String = "Great Book",
+    onSearch: (String) -> Unit
+) {
+
+    Column(modifier = modifier
+        .fillMaxWidth()
+        .padding(16.dp)) {
+
+        val textFieldValue = rememberSaveable { mutableStateOf(defaultValue) }
+        val keyboardController = LocalSoftwareKeyboardController.current
+        val valid = remember(textFieldValue.value) { textFieldValue.value.trim().isNotEmpty() }
+
+        InputField(
+            modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .padding(3.dp)
+                .background(Color.White, CircleShape)
+                .padding(horizontal = 20.dp, vertical = 16.dp),
+            isSingleLine = false,
+            valueState = textFieldValue,
+            labelId = "Enter your thoughts",
+            enabled = true,
+            onAction = KeyboardActions {
+                if (!valid) return@KeyboardActions
+                onSearch(textFieldValue.value.trim())
+                keyboardController?.hide()
+            }
+        )
 
     }
 }
@@ -188,7 +251,5 @@ fun CardListItem(book: MBook, onPressDetails: () -> Unit) {
 
             }
         }
-
-
     }
 }
