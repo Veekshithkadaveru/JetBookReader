@@ -1,6 +1,8 @@
 package com.example.jetbookreader.screens.update
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -49,6 +52,7 @@ import com.example.jetbookreader.components.ReaderAppBar
 import com.example.jetbookreader.components.RoundedButton
 import com.example.jetbookreader.data.DataOrException
 import com.example.jetbookreader.model.MBook
+import com.example.jetbookreader.navigation.ReaderScreens
 import com.example.jetbookreader.screens.home.HomeScreenViewmodel
 import com.example.jetbookreader.utils.formatDate
 import com.google.firebase.Timestamp
@@ -130,6 +134,7 @@ fun ShowSimpleForm(book: MBook, navController: NavController) {
     val isStartReading = remember { mutableStateOf(false) }
     val isFinishedReading = remember { mutableStateOf(false) }
     val ratingVal = remember { mutableStateOf(0) }
+    val context = LocalContext.current
 
     SimpleForm(
         modifier = Modifier,
@@ -218,6 +223,11 @@ fun ShowSimpleForm(book: MBook, navController: NavController) {
                     .collection("books")
                     .document(book.id!!)
                     .update(bookToUpdate)
+                    .addOnCompleteListener { task->
+                        showToast(context,"Book Updated Successfully")
+                        navController.navigate(ReaderScreens.ReaderHomeScreen.name)
+
+                    }
 
             }
 
@@ -351,4 +361,8 @@ fun CardListItem(book: MBook, onPressDetails: () -> Unit) {
             }
         }
     }
+}
+
+fun showToast(context: Context, message: String) {
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
