@@ -50,6 +50,7 @@ import com.example.jetbookreader.components.RoundedButton
 import com.example.jetbookreader.data.DataOrException
 import com.example.jetbookreader.model.MBook
 import com.example.jetbookreader.screens.home.HomeScreenViewmodel
+import com.example.jetbookreader.utils.formatDate
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -161,7 +162,7 @@ fun ShowSimpleForm(book: MBook, navController: NavController) {
                     )
                 }
             } else {
-                Text(text = "Started on :${book.startedReading}")
+                Text(text = "Started on :${formatDate(book.startedReading!!)}")
 
             }
         }
@@ -181,7 +182,7 @@ fun ShowSimpleForm(book: MBook, navController: NavController) {
                     )
                 }
             } else {
-                Text(text = "Read on :${book.finishedReading}")
+                Text(text = "Read on :${formatDate(book.finishedReading!!)}")
             }
         }
 
@@ -212,7 +213,7 @@ fun ShowSimpleForm(book: MBook, navController: NavController) {
 
         RoundedButton(label = "Update") {
 
-            if (bookUpdate){
+            if (bookUpdate) {
                 FirebaseFirestore.getInstance()
                     .collection("books")
                     .document(book.id!!)
