@@ -46,9 +46,12 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.jetbookreader.components.InputField
 import com.example.jetbookreader.components.RatingBar
 import com.example.jetbookreader.components.ReaderAppBar
+import com.example.jetbookreader.components.RoundedButton
 import com.example.jetbookreader.data.DataOrException
 import com.example.jetbookreader.model.MBook
 import com.example.jetbookreader.screens.home.HomeScreenViewmodel
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.FirebaseFirestore
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "ProduceStateDoesNotAssignValue")
 @Composable
@@ -188,6 +191,39 @@ fun ShowSimpleForm(book: MBook, navController: NavController) {
         RatingBar(rating = it!!) { rating ->
             ratingVal.value = rating
         }
+    }
+
+    Spacer(modifier = Modifier.padding(bottom = 15.dp))
+    Row {
+        val changedNotes = book.notes != notesText.value
+        val changedRating = book.rating?.toInt() != ratingVal.value
+        val isFinishedTimestamp =
+            if (isFinishedReading.value) Timestamp.now() else book.finishedReading
+        val isStartedTimestamp =
+            if (isStartReading.value) Timestamp.now() else book.startedReading
+        val bookUpdate =
+            changedNotes || changedRating || isStartReading.value || isFinishedReading.value
+        val bookToUpdate = hashMapOf(
+            "finished_reading_at" to isFinishedTimestamp,
+            "started_reading_at" to isStartedTimestamp,
+            "rating" to ratingVal.value,
+            "notes" to notesText.value
+        ).toMap()
+
+        RoundedButton(label = "Update") {
+
+            if (bookUpdate){
+                FirebaseFirestore.getInstance()
+                    .collection("books")
+                    .document(book.id!!)
+                    .update(bookToUpdate)
+
+            }
+
+
+        }
+        Spacer(modifier = Modifier.width(100.dp))
+        RoundedButton(label = "Delete")
     }
 }
 
