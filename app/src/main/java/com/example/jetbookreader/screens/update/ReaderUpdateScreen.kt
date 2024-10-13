@@ -20,8 +20,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -29,6 +31,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -40,12 +43,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.jetbookreader.R
 import com.example.jetbookreader.components.InputField
 import com.example.jetbookreader.components.RatingBar
 import com.example.jetbookreader.components.ReaderAppBar
@@ -130,7 +135,7 @@ fun ReaderUpdateScreen(
 @Composable
 fun ShowSimpleForm(book: MBook, navController: NavController) {
 
-    val notesText = remember { mutableStateOf("") }
+    val notesText = remember { mutableStateOf(book.notes ?: "") }
     val isStartReading = remember { mutableStateOf(false) }
     val isFinishedReading = remember { mutableStateOf(false) }
     val ratingVal = remember { mutableStateOf(0) }
@@ -139,7 +144,8 @@ fun ShowSimpleForm(book: MBook, navController: NavController) {
     SimpleForm(
         modifier = Modifier,
         loading = false,
-        defaultValue = book.notes.toString().ifEmpty { "No Thoughts available" }
+        defaultValue = if (book.notes.toString().isNotEmpty()) book.notes.toString()
+        else "No thoughts available."
     ) { note ->
 
         notesText.value = note
@@ -223,8 +229,8 @@ fun ShowSimpleForm(book: MBook, navController: NavController) {
                     .collection("books")
                     .document(book.id!!)
                     .update(bookToUpdate)
-                    .addOnCompleteListener { task->
-                        showToast(context,"Book Updated Successfully")
+                    .addOnCompleteListener { task ->
+                        showToast(context, "Book Updated Successfully")
                         navController.navigate(ReaderScreens.ReaderHomeScreen.name)
 
                     }
@@ -234,9 +240,65 @@ fun ShowSimpleForm(book: MBook, navController: NavController) {
 
         }
         Spacer(modifier = Modifier.width(100.dp))
-        RoundedButton(label = "Delete")
+        val openDialog = remember { mutableStateOf(false) }
+        if (openDialog.value) {
+            ShowAlertDialog(title = "Delete Book",
+                message = stringResource(id = R.string.sure) +
+                        "\n" + stringResource(id = R.string.action), openDialog=openDialog
+            ) {
+                FirebaseFirestore.getInstance()
+                    .collection("books")
+                    .document(book.id!!).delete()
+                    .addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            openDialog.value = false
+                            navController.navigate(ReaderScreens.ReaderHomeScreen.name)
+                        }
+                    }
+            }
+        }
+        RoundedButton(label = "Delete") {
+            openDialog.value=true
+
+        }
     }
 }
+
+@Composable
+fun ShowAlertDialog(
+    title: String,
+    message: String,
+    openDialog: MutableState<Boolean>,
+    onYesPressed: () -> Unit
+) {
+    if (openDialog.value) {
+        AlertDialog(
+            onDismissRequest = { openDialog.value = false },
+            title = {
+                Text(text = title)
+            },
+            text = {
+                Text(text = message)
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    onYesPressed.invoke()
+                    openDialog.value = false
+                }) {
+                    Text(text = "Yes")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    openDialog.value = false
+                }) {
+                    Text(text = "No")
+                }
+            }
+        )
+    }
+}
+
 
 @Composable
 fun SimpleForm(
