@@ -64,7 +64,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -358,11 +357,17 @@ fun ListCard(
                 )
             }
 
+            val isStartedReading = remember { mutableStateOf(false) }
+
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomEnd) // Align at bottom end
             ) {
-                RoundedButton(label = "Reading", radius = 70)
+                isStartedReading.value = book.startedReading != null
+                RoundedButton(
+                    label = if (isStartedReading.value) "Reading" else "Not Yet",
+                    radius = 70
+                )
             }
         }
     }
@@ -446,6 +451,7 @@ fun RatingBar(
                                 onPressRating(i)
                                 ratingState = i
                             }
+
                             MotionEvent.ACTION_UP -> {
                                 selected = false
                             }
