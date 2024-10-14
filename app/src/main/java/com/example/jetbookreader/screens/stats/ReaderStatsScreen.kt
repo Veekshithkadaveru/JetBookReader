@@ -2,10 +2,12 @@ package com.example.jetbookreader.screens.stats
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,6 +19,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ThumbDown
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material.icons.sharp.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -30,9 +34,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
@@ -144,12 +151,11 @@ fun ReaderStatsScreen(
                                 viewModel.data.value.data!!.filter { mBook ->
                                     (mBook.userId == currentUser?.uid) && (mBook.finishedReading != null)
                                 }
-                            }else{
+                            } else {
                                 emptyList()
                             }
-                        items(items=readBooks){book->
+                        items(items = readBooks) { book ->
                             BookRowStats(book = book)
-
 
                         }
                     }
@@ -159,12 +165,11 @@ fun ReaderStatsScreen(
         }
     }
 }
+
 @Composable
 fun BookRowStats(book: MBook) {
     Card(modifier = Modifier
-        .clickable {
-
-        }
+        .clickable {}
         .fillMaxWidth()
         .height(110.dp)
         .padding(8.dp),
@@ -183,12 +188,49 @@ fun BookRowStats(book: MBook) {
                 painter = rememberAsyncImagePainter(model = imageUrl),
                 contentDescription = "book image",
                 modifier = Modifier
-                    .width(80.dp)
-                    .fillMaxHeight()
-                    .padding(end = 8.dp)
+                    .size(80.dp)
+                    .padding(end = 8.dp),
+                contentScale = ContentScale.Crop
             )
             Column {
-                Text(text = book.title.toString(), overflow = TextOverflow.Ellipsis)
+
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween, // Makes sure the Text and Icon are spaced out
+                    modifier = Modifier.fillMaxWidth() // Ensure the Row takes full width
+                ) {
+                    // Book title text
+                    Text(
+                        text = book.title.toString(),
+                        fontSize = 14.sp,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f) // Ensures title takes up as much space as possible
+                    )
+
+                    // Fixed Spacer to separate the text and icon
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    // Thumbs-up or Thumbs-down icon
+                    when {
+                        book.rating!! >= 4 -> {
+                            Icon(
+                                imageVector = Icons.Default.ThumbUp,
+                                contentDescription = "Thumb up",
+                                tint = Color.Blue.copy(alpha = 0.8f),
+                                modifier = Modifier.size(24.dp) // Control icon size for consistency
+                            )
+                        }
+                        book.rating!! <= 2 -> {
+                            Icon(
+                                imageVector = Icons.Default.ThumbDown,
+                                contentDescription = "Thumb Down",
+                                tint = Color.Red.copy(alpha = 0.8f),
+                                modifier = Modifier.size(24.dp) // Control icon size for consistency
+                            )
+                        }
+                    }
+                }
+
+
                 Text(
                     text = "Author:${book.authors}",
                     overflow = TextOverflow.Clip,
@@ -199,11 +241,7 @@ fun BookRowStats(book: MBook) {
                     overflow = TextOverflow.Clip,
                     style = MaterialTheme.typography.labelMedium
                 )
-                Text(
-                    text = "${book.categories}",
-                    overflow = TextOverflow.Clip,
-                    style = MaterialTheme.typography.labelMedium
-                )
+
             }
         }
     }
