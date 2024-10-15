@@ -145,7 +145,7 @@ fun ReaderStatsScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .fillMaxHeight()
-                            .padding(bottom =12.dp),
+                            .padding(bottom =10.dp),
                         contentPadding = PaddingValues(16.dp)
                     ) {
 

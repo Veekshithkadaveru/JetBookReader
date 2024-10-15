@@ -23,7 +23,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -79,7 +78,7 @@ fun ReaderUpdateScreen(
         ) {
             navController.popBackStack()
         }
-    }) { PaddingValues ->
+    }) { paddingValues ->
 
         val bookInfo = produceState<DataOrException<List<MBook>, Boolean, Exception>>(
             initialValue = DataOrException(
@@ -96,7 +95,7 @@ fun ReaderUpdateScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(3.dp)
-                .padding(PaddingValues)
+                .padding(paddingValues)
         ) {
             Column(
                 modifier = Modifier.padding(top = 3.dp),
