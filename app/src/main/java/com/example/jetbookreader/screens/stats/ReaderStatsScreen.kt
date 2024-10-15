@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -48,6 +49,7 @@ import com.example.jetbookreader.model.MBook
 import com.example.jetbookreader.screens.home.HomeScreenViewmodel
 import com.google.firebase.auth.FirebaseAuth
 import java.util.Locale
+
 
 @Composable
 fun ReaderStatsScreen(
@@ -138,11 +140,12 @@ fun ReaderStatsScreen(
                 if (viewModel.data.value.loading == true) {
                     LinearProgressIndicator()
                 } else {
-                    Divider()
+                    Divider(modifier = Modifier.padding(8.dp))
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .fillMaxHeight(),
+                            .fillMaxHeight()
+                            .padding(bottom =12.dp),
                         contentPadding = PaddingValues(16.dp)
                     ) {
 
@@ -171,7 +174,7 @@ fun BookRowStats(book: MBook) {
     Card(modifier = Modifier
         .clickable {}
         .fillMaxWidth()
-        .height(110.dp)
+        .height(130.dp)
         .padding(8.dp),
         shape = RectangleShape,
         elevation = CardDefaults.cardElevation(7.dp)) {

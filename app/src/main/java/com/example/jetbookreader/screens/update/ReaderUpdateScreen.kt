@@ -144,8 +144,7 @@ fun ShowSimpleForm(book: MBook, navController: NavController) {
     SimpleForm(
         modifier = Modifier,
         loading = false,
-        defaultValue = if (book.notes.toString().isNotEmpty()) book.notes.toString()
-        else "No thoughts available."
+        defaultValue = book.notes.toString().ifEmpty { "No thoughts available." }
     ) { note ->
 
         notesText.value = note
