@@ -75,7 +75,7 @@ fun ReaderLoginScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             val text = if (showLoginForm.value) "Sign Up" else "Login"
-            Text(text = "New User?")
+            Text(text = if (showLoginForm.value) "New User?" else "Existing User?")
             Text(
                 text,
                 modifier = Modifier
@@ -110,7 +110,7 @@ fun UserForm(
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         if (isCreateAccount) Text(
             text = stringResource(id = R.string.create_account),
-            modifier = Modifier.padding(5.dp)
+            modifier = Modifier.padding(1.dp)
         ) else Text(
             text = ""
         )
