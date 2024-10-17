@@ -23,8 +23,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.NoteAlt
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Card
@@ -191,7 +193,7 @@ fun ReaderAppBar(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (showProfile) {
                     Icon(
-                        imageVector = Icons.Default.Favorite,
+                        imageVector = Icons.Default.NoteAlt,
                         contentDescription = "Logo Icon",
                         modifier = Modifier
                             .clip(
@@ -211,7 +213,7 @@ fun ReaderAppBar(
                 }
                 Text(
                     text = title,
-                    color = Color.Red.copy(alpha = 0.7f),
+                    color = Color.Blue.copy(alpha = 0.7f),
                     style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp)
                 )
             }
